@@ -5,12 +5,19 @@ const router = createRouter({
   routes: [
     { 
       path: '/', 
-      redirect: '/login'
+      redirect: '/dashboard',
+      meta: { requiresAuth: true }
     },
     { 
       path: '/login', 
       name: 'Login', 
       component: () => import('@/views/Login.vue') 
+    },
+    { 
+      path: '/dashboard', 
+      name: 'Dashboard',
+      component: () => import('@/views/Dashboard.vue'),
+      meta: { requiresAuth: true }
     },
     { 
       path: '/catgallery', 
