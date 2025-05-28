@@ -23,7 +23,13 @@ const router = createRouter({
           name: 'Dashboard',
           component: () => import('@/views/Dashboard.vue'),
           meta: { requiresAuth: true }
-        }
+        },
+        {
+          path: 'readdy',
+          name: 'Readdy',
+          component: () => import('@/views/Readdy.vue'),
+          meta: { requiresAuth: true }
+        } 
       ]
     },
     {

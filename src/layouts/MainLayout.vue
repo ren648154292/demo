@@ -32,11 +32,12 @@
           text-color="#fff"
           active-text-color="#ffd04b"
         >
-          <el-menu-item index="/dashboard">
-            <span>首页</span>
-          </el-menu-item>
-          <el-menu-item index="/user">
-            <span>(>^ω^<)喵</span>
+          <el-menu-item 
+            v-for="item in menuItems" 
+            :key="item.index"
+            :index="item.index"
+          >
+            <span>{{ item.title }}</span>
           </el-menu-item>
         </el-menu>
       </aside>
@@ -52,9 +53,11 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { useLoginForm } from '@/stores/login';
+import { useSidebar } from '@/hooks/useSidebar';
 
 const router = useRouter();
 const loginStore = useLoginForm();
+const { menuItems } = useSidebar();
 
 const logout = () => {
   loginStore.logout();
