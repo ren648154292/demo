@@ -22,6 +22,10 @@ export function useSidebar() {
     {
       index: '/readdy',
       title: 'readdy.ai'
+    },
+    {
+      index: '/daily-briefing',
+      title: '每日简报'
     }
   ])
 

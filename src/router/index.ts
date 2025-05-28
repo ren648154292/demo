@@ -29,7 +29,13 @@ const router = createRouter({
           name: 'Readdy',
           component: () => import('@/views/Readdy.vue'),
           meta: { requiresAuth: true }
-        } 
+        },
+        {
+          path: 'daily-briefing',
+          name: 'DailyBriefing',
+          component: () => import('@/views/DailyBriefing.vue'),
+          meta: { requiresAuth: true }
+        }
       ]
     },
     {
