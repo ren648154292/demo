@@ -10,7 +10,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/catgallery'
+          redirect: '/dashboard'
         },
         {
           path: 'catgallery',
