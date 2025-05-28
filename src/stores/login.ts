@@ -10,10 +10,15 @@ export const useLoginForm = defineStore('login', {
       if (username === 'admin' && password === '12345') {
         this.username = username;
         this.password = password;
+        // 设置模拟token
+        localStorage.setItem('token', 'mock-login-token');
         return Promise.resolve(true);
       } else {
         return Promise.resolve(false);
       }
+    },
+    logout() {
+      localStorage.removeItem('token');
     }
   }
 });
