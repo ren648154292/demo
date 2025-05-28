@@ -1,41 +1,35 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import MainLayout from '@/layouts/MainLayout.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
-    { 
-      path: '/', 
-      redirect: '/dashboard',
-      meta: { requiresAuth: true }
+    {
+      path: '/',
+      component: MainLayout,
+      children: [
+        {
+          path: '',
+          redirect: '/catgallery'
+        },
+        {
+          path: 'catgallery',
+          name: 'CatGallery',
+          component: () => import('@/views/CatGallery.vue')
+        },
+        {
+          path: 'dashboard',
+          name: 'Dashboard', 
+          component: () => import('@/views/Dashboard.vue')
+        }
+      ]
     },
-    { 
-      path: '/login', 
-      name: 'Login', 
-      component: () => import('@/views/Login.vue') 
-    },
-    { 
-      path: '/dashboard', 
-      name: 'Dashboard',
-      component: () => import('@/views/Dashboard.vue'),
-      meta: { requiresAuth: true }
-    },
-    { 
-      path: '/catgallery', 
-      name: 'CatGallery',
-      component: () => import('@/views/CatGallery.vue'),
-      meta: { requiresAuth: true }
+    {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/Login.vue')
     }
   ]
-})
-
-router.beforeEach((to) => {
-  // 检查是否需要认证
-  if (to.meta.requiresAuth) {
-    const isAuthenticated = localStorage.getItem('isAuthenticated')
-    if (!isAuthenticated) {
-      return { name: 'Login' }
-    }
-  }
 })
 
 export default router

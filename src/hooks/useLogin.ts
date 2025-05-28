@@ -1,94 +1,75 @@
-import { ref, reactive } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import type { FormInstance, FormRules } from 'element-plus';
-import { useAuth } from './useAuth';
-
-export interface LoginForm {
-  username: string;
-  password: string;
-  remember: boolean;
-}
+import { ElMessage, ElLoading, type FormInstance } from 'element-plus';
+import { useLoginForm } from '@/stores/login';
 
 export const useLogin = () => {
   const router = useRouter();
   const loginFormRef = ref<FormInstance>();
-  const loading = ref(false);
-
-  const loginForm = reactive<LoginForm>({
-    username: 'admin',
-    password: '1234567',
-    remember: false,
+  const loginStore = useLoginForm();
+  const { username, password } = storeToRefs(loginStore);
+  
+  const loginForm = ref({
+    username: username.value,
+    password: password.value,
+    remember: false
   });
 
-  const loginRules: FormRules = {
+  watch(loginForm.value, (newValue) => {
+    username.value = newValue.username;
+    password.value = newValue.password;
+  });
+
+  watch([username, password], ([newUsername, newPassword]) => {
+    loginForm.value.username = newUsername;
+    loginForm.value.password = newPassword;
+  });
+
+  const rules = {
     username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' },
-      { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
+      { required: true, message: '请输入用户名', trigger: 'blur' }
     ],
     password: [
-      { required: true, message: '请输入密码', trigger: 'blur' },
-      { min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
-    ],
+      { required: true, message: '请输入密码', trigger: 'blur' }
+    ]
   };
 
-  const handleInput = (field: keyof LoginForm) => {
-    console.log(`${field} 输入变化:`, loginForm[field]);
-  };
-
-  const handleLogin = () => {
-    if (!loginFormRef.value) return;
-
-    loginFormRef.value.validate((valid) => {
-      if (!valid) {
-        ElMessage.warning('请正确填写登录信息');
-        return;
+  const handleLogin = async () => {
+    let loadingInstance: ReturnType<typeof ElLoading.service>;
+    try {
+      await loginFormRef.value?.validate();
+      loadingInstance = ElLoading.service({
+        lock: true,
+        text: '登录中...',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
+      
+      const success = await loginStore.login(loginForm.value.username, loginForm.value.password);
+      if (success) {
+        ElMessage.success('登录成功');
+        setTimeout(() => {
+          loadingInstance.close();
+          router.push('/');
+        }, 1000);
+      } else {
+        loadingInstance.close();
+        ElMessage.error('用户名或密码错误');
       }
-
-      loading.value = true;
-
-      // 模拟登录请求
-      setTimeout(() => {
-        loading.value = false;
-        if (
-          loginForm.username === 'admin' &&
-          loginForm.password === '1234567'
-        ) {
-          try {
-            const { login } = useAuth();
-            login(); // 确保登录完成
-            ElMessage.success('登录成功');
-            //跳转到首页
-            router.push('/');
-            // 如果勾选记住密码则存储信息
-            if (loginForm.remember) {
-              localStorage.setItem(
-                'loginInfo',
-                JSON.stringify({
-                  username: loginForm.username,
-                  password: loginForm.password,
-                })
-              );
-            } else {
-              localStorage.removeItem('loginInfo');
-            }
-          } catch (error) {
-            console.error('登录跳转失败:', error);
-            ElMessage.error('登录跳转失败，请重试');
-          }
-        } else {
-          ElMessage.error('用户名或密码错误，请重试');
-        }
-      }, 1500);
-    });
+    } catch (error) {
+      if (loadingInstance) {
+        loadingInstance.close();
+      }
+      if (error instanceof Error) {
+        ElMessage.error(error.message);
+      }
+    }
   };
 
   return {
     loginFormRef,
-    loading,
     loginForm,
-    loginRules,
-    handleInput,
+    rules,
     handleLogin,
   };
 };

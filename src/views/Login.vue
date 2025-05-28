@@ -5,7 +5,7 @@
       <el-form
         ref="loginFormRef"
         :model="loginForm"
-        :rules="loginRules"
+        :rules="rules"
         class="login-form"
         @submit.prevent="handleLogin"
       >
@@ -14,7 +14,6 @@
             v-model="loginForm.username"
             placeholder="请输入用户名"
             prefix-icon="User"
-            @input="handleInput('username')"
           />
         </el-form-item>
 
@@ -25,7 +24,6 @@
             placeholder="请输入密码"
             prefix-icon="Lock"
             show-password
-            @input="handleInput('password')"
           />
         </el-form-item>
 
@@ -37,7 +35,6 @@
           <el-button
             type="primary"
             class="login-btn"
-            :loading="loading"
             @click="handleLogin"
           >
             登录
@@ -64,10 +61,8 @@ import { useLogin } from '@/hooks/useLogin'
 
 const {
   loginFormRef,
-  loading,
   loginForm,
-  loginRules,
-  handleInput,
+  rules,
   handleLogin,
 } = useLogin()
 </script>

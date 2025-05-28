@@ -1,9 +1,14 @@
 <template>
-  <router-view />
+  <div class="app-container">
+    <div class="main-content">
+      <router-view />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-// 路由视图容器不需要直接引入组件
+import { useRoute } from 'vue-router'
+const $route = useRoute()
 </script>
 
 <style>
@@ -16,5 +21,18 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  height: 100%;
+}
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+.side-menu {
+  width: 200px;
+  height: 100%;
+}
+.main-content {
+  flex: 1;
+  overflow: auto;
 }
 </style>
