@@ -7,10 +7,18 @@
         </div>
       </template>
 
-      <el-form label-position="left" label-width="110px" class="w-full">
+      <el-form label-position="left" label-width="140px" class="w-full">
         <!-- 分组：业绩景气度 -->
         <div class="group-row">
-          <div class="group-title">业绩景气度</div>
+          <div class="group-title">
+            <el-checkbox
+              :model-value="isAllSelected('performance')"
+              :indeterminate="isIndeterminate('performance')"
+              @change="(val:boolean) => toggleGroup('performance', val)"
+            >
+              业绩景气度
+            </el-checkbox>
+          </div>
           <div class="group-content">
             <el-checkbox-group v-model="selected.performance">
               <el-checkbox v-for="item in groups.performance" :key="item.value" :label="item.value">
@@ -22,7 +30,15 @@
 
         <!-- 分组：投研人员行为 -->
         <div class="group-row">
-          <div class="group-title">投研人员行为</div>
+          <div class="group-title">
+            <el-checkbox
+              :model-value="isAllSelected('research')"
+              :indeterminate="isIndeterminate('research')"
+              @change="(val:boolean) => toggleGroup('research', val)"
+            >
+              投研人员行为
+            </el-checkbox>
+          </div>
           <div class="group-content">
             <el-checkbox-group v-model="selected.research">
               <el-checkbox v-for="item in groups.research" :key="item.value" :label="item.value">
@@ -34,7 +50,15 @@
 
         <!-- 分组：资金行为 -->
         <div class="group-row">
-          <div class="group-title">资金行为</div>
+          <div class="group-title">
+            <el-checkbox
+              :model-value="isAllSelected('capital')"
+              :indeterminate="isIndeterminate('capital')"
+              @change="(val:boolean) => toggleGroup('capital', val)"
+            >
+              资金行为
+            </el-checkbox>
+          </div>
           <div class="group-content">
             <el-checkbox-group v-model="selected.capital">
               <el-checkbox v-for="item in groups.capital" :key="item.value" :label="item.value">
@@ -46,7 +70,15 @@
 
         <!-- 分组：市场信号 -->
         <div class="group-row">
-          <div class="group-title">市场信号</div>
+          <div class="group-title">
+            <el-checkbox
+              :model-value="isAllSelected('market')"
+              :indeterminate="isIndeterminate('market')"
+              @change="(val:boolean) => toggleGroup('market', val)"
+            >
+              市场信号
+            </el-checkbox>
+          </div>
           <div class="group-content">
             <el-checkbox-group v-model="selected.market">
               <el-checkbox v-for="item in groups.market" :key="item.value" :label="item.value">
@@ -58,7 +90,15 @@
 
         <!-- 分组：综合指标 -->
         <div class="group-row">
-          <div class="group-title">综合指标</div>
+          <div class="group-title">
+            <el-checkbox
+              :model-value="isAllSelected('composite')"
+              :indeterminate="isIndeterminate('composite')"
+              @change="(val:boolean) => toggleGroup('composite', val)"
+            >
+              综合指标
+            </el-checkbox>
+          </div>
           <div class="group-content">
             <el-checkbox-group v-model="selected.composite">
               <el-checkbox v-for="item in groups.composite" :key="item.value" :label="item.value">
@@ -149,6 +189,27 @@ const selected = reactive<Record<keyof typeof defaultSelected, string[]>>({
   composite: [...defaultSelected.composite],
 })
 
+type GroupKey = keyof typeof groups
+
+function isAllSelected(group: GroupKey): boolean {
+  const total = groups[group].length
+  return selected[group].length === total && total > 0
+}
+
+function isIndeterminate(group: GroupKey): boolean {
+  const len = selected[group].length
+  const total = groups[group].length
+  return len > 0 && len < total
+}
+
+function toggleGroup(group: GroupKey, checked: boolean) {
+  if (checked) {
+    selected[group] = groups[group].map((i) => i.value)
+  } else {
+    selected[group] = []
+  }
+}
+
 function submit() {
   const total = Object.values(selected).reduce((sum, arr) => sum + arr.length, 0)
   ElMessage.success(`已提交，共选择 ${total} 个筛选项`)
@@ -181,8 +242,11 @@ function reset() {
 }
 
 .group-title {
-  color: #606266;
-  line-height: 32px;
+  color: #303133;
+  line-height: 36px;
+  background-color: #F4F6FB;
+  border-radius: 4px;
+  padding: 6px 10px;
 }
 
 .group-content {
