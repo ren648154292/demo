@@ -8,7 +8,7 @@
       </el-radio-group>
     </div>
 
-    <el-card shadow="never" class="overflow-auto">
+    <el-card shadow="never" class="overflow-x-auto overflow-y-hidden">
       <div
         class="min-w-[760px]"
         :style="{ display: 'grid', gridTemplateColumns: `120px repeat(${current.dates.length}, minmax(120px, 1fr))` }"
@@ -24,18 +24,18 @@
         </div>
 
         <!-- 数据行 -->
-        <template v-for="row in current.rows" :key="row.rank">
+        <template v-for="(row, rIdx) in current.rows" :key="row.rank">
           <!-- 左侧行头 -->
-          <div class="p-3 text-gray-600 border-b border-r bg-white/70 sticky left-0">{{ row.rank }}</div>
+          <div class="p-3 text-gray-600 border-b border-r bg-white sticky left-0">{{ row.rank }}</div>
 
           <!-- 单元格 -->
-          <template v-for="cell in row.items" :key="row.rank + cell.name">
+          <template v-for="(cell, cIdx) in row.items" :key="row.rank + cell.name">
             <div
               class="p-3 text-center border-b border-r transition-colors"
-              :style="getCellStyle(cell.value)"
+              :style="getCellStyleByIndex(rIdx, cIdx)"
             >
-              <div class="text-sm text-gray-700">{{ cell.name }}</div>
-              <div :class="valueClass(cell.value)">{{ formatPercent(cell.value) }}</div>
+              <div class="text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">{{ cell.name }}</div>
+              <div class="overflow-hidden text-ellipsis whitespace-nowrap" :class="valueClass(cell.value)">{{ formatPercent(cell.value) }}</div>
             </div>
           </template>
         </template>
@@ -191,16 +191,21 @@ const datasets = reactive<Record<Mode, DataSet>>({
 
 const current = computed(() => datasets[mode.value])
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value))
-}
+// 渐变起始色（终点统一为 #FFFFFF），按顺序循环
+const gradientStartColors: string[] = [
+  '#FDDC9E', '#F9C8A9', '#F9B6B0', '#F8E69A', '#EBEB84', '#DBC0F1',
+  '#9DCCF3', '#BBCFF5', '#AAD0E8', '#FABED9', '#FAEDD3', '#F9E9DD',
+  '#FCE8E6', '#F7F3DA', '#F2F3D7', '#F1E7F8', '#DBEAF7', '#E1EBFE',
+  '#E9F5FF', '#F7E0EA', '#FFFAF1', '#FFF6EF', '#FFF6F5', '#FFFDF1',
+  '#F2F2EB', '#FBF5FF', '#F0F9FF', '#EFF4FF', '#F0F5F8', '#FFF3F8'
+]
 
-function getCellStyle(val: number) {
-  const intensity = clamp(Math.abs(val) / 16, 0.08, 0.9)
-  const color = val >= 0 ? [244, 67, 54] : [22, 163, 74] // 红/绿
-  const bg = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${intensity * 0.25})`
+function getCellStyleByIndex(rowIndex: number, colIndex: number) {
+  // 以行优先顺序给格子着色：从左到右、从上到下
+  const linearIndex = rowIndex * current.value.dates.length + colIndex
+  const color = gradientStartColors[linearIndex % gradientStartColors.length]
   return {
-    background: bg
+    background: `linear-gradient(180deg, ${color} 0%, #FFFFFF 100%)`
   }
 }
 
