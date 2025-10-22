@@ -16,6 +16,10 @@ export function useSidebar() {
       title: '首页'
     },
     {
+      index: '/image-effects',
+      title: '筛选结果'
+    },
+    {
       index: '/catgallery',
       title: '(>^ω^<)喵'
     },
