@@ -35,6 +35,12 @@ const router = createRouter({
           name: 'DailyBriefing',
           component: () => import('@/views/DailyBriefing.vue'),
           meta: { requiresAuth: true }
+        },
+        {
+          path: 'image-effect',
+          name: 'ImageEffect',
+          component: () => import('@/views/ImageEffect.vue'),
+          meta: { requiresAuth: true }
         }
       ]
     },
