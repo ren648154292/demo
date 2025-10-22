@@ -13,6 +13,12 @@ const router = createRouter({
           redirect: '/dashboard'
         },
         {
+          path: 'image-effects',
+          name: 'ImageEffects',
+          component: () => import('@/views/ImageEffects.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
           path: 'catgallery',
           name: 'CatGallery',
           component: () => import('@/views/CatGallery.vue'),
