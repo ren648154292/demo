@@ -231,8 +231,8 @@ function reset() {
 
 .group-row {
   display: grid;
-  grid-template-columns: 110px 1fr;
-  align-items: start;
+  grid-template-columns: 140px 1fr;
+  align-items: stretch; /* 让左列与右侧内容等高，从而背景填充整列 */
   padding: 14px 0;
   border-bottom: 1px dashed #ebeef5;
 }
@@ -243,10 +243,12 @@ function reset() {
 
 .group-title {
   color: #303133;
-  line-height: 36px;
   background-color: #F4F6FB;
   border-radius: 4px;
   padding: 6px 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .group-content {
