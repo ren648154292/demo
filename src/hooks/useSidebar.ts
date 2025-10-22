@@ -27,6 +27,11 @@ export function useSidebar() {
       index: '/daily-briefing',
       title: '每日简报'
     }
+    ,
+    {
+      index: '/image-effects',
+      title: '图片效果'
+    }
   ])
 
 
