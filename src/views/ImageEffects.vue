@@ -24,21 +24,25 @@
         </div>
 
         <!-- 数据行 -->
-        <template v-for="(row, rIdx) in current.rows" :key="row.rank">
+        <div
+          v-for="(row, rowIndex) in current.rows"
+          :key="row.rank"
+          class="row-fragment"
+        >
           <!-- 左侧行头 -->
           <div class="p-3 text-gray-600 border-b border-r bg-white sticky left-0">{{ row.rank }}</div>
 
           <!-- 单元格 -->
-          <template v-for="(cell, cIdx) in row.items" :key="row.rank + cell.name">
+          <template v-for="(cell, colIndex) in row.items" :key="row.rank + cell.name">
             <div
               class="p-3 text-center border-b border-r transition-colors"
-              :style="getCellStyleByIndex(rIdx, cIdx)"
+              :style="getCellStyleByIndex(rowIndex, colIndex)"
             >
               <div class="text-sm text-gray-700 overflow-hidden text-ellipsis whitespace-nowrap">{{ cell.name }}</div>
               <div class="overflow-hidden text-ellipsis whitespace-nowrap" :class="valueClass(cell.value)">{{ formatPercent(cell.value) }}</div>
             </div>
           </template>
-        </template>
+        </div>
       </div>
     </el-card>
   </div>
@@ -225,5 +229,10 @@ function formatPercent(val: number) {
   position: sticky;
   left: 0;
   z-index: 1;
+}
+
+/* 容器内将 v-for 的块当作片段，使其子元素继续参与网格布局 */
+.row-fragment { 
+  display: contents; 
 }
 </style>
